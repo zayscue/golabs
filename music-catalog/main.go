@@ -2,8 +2,10 @@ package main
 
 import (
 	"net/http"
+	"os"
 
-	"github.com/gin-gonic/gin"
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 type album struct {
@@ -19,14 +21,25 @@ var albums = []album{
 	{ID: "3", Title: "Sarah Vaughan and Clifford Brown", Artist: "Sarah Vaughan", Price: 39.99},
 }
 
-func getAlbums(c *gin.Context) {
-	c.IndentedJSON(http.StatusOK, albums)
-}
-
 
 func main() {
-	router := gin.Default()
-	router.GET("/albums", getAlbums)
+	e := echo.New()
 
-	router.Run("localhost:8080")
+	e.Use(middleware.Logger())
+	e.Use(middleware.Recover())
+
+	e.GET("/ping", func(c echo.Context) error {
+		return c.JSON(http.StatusOK, struct{ Status string}{Status: "OK"})
+	})
+
+	e.GET("/albums", func(c echo.Context) error {
+		return c.JSON(http.StatusOK, albums)
+	})
+
+	httpPort := os.Getenv("HTTP_PORT")
+	if httpPort == "" {
+		httpPort = "8080"
+	}
+
+	e.Logger.Fatal(e.Start(":" + httpPort))
 }
