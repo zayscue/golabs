@@ -1,0 +1,15 @@
+apiVersion: skaffold/v2beta28
+kind: Config
+
+build:
+  artifacts:
+    - image: golabs.music-catalog
+      context: src/music-catalog
+
+deploy:
+  helm:
+    releases:
+      - name: music-catalog
+        chartPath: deploy/k8s/helm/music-catalog
+        artifactOverrides:
+          image: golabs.music-catalog

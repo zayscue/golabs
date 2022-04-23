@@ -1,0 +1,4 @@
+replicaCount: 2
+
+image: golabs.music-catalog:latest
+pullPolicy: IfNotPresent
